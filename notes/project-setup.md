@@ -1,28 +1,68 @@
-## Initialize Project Skeleton
+# Project Setup (Tiny-Lang)
 
-### 1. Create the folder structure
+## Goal
 
-Within your projects folder:
+Initialize a clean, professional Python project structure for building a tiny interpreter.
+
+The goal of this step was not to write language logic yet, but to:
+- Create a proper package layout
+- Set up an isolated Python environment
+- Prepare for modular development (lexer, parser, interpreter)
+- Ensure the project is installable and runnable
+
+---
+
+## 1. Repository Initialization
+
+Created a new GitHub repository for Tiny-Lang.
+
+Local project structure:
+
 ```
-mkdir tiny-lang-interpreter
-cd tiny-lang-interpreter
+Tiny-Lang-Interpreter/
+├── notes/
+├── src/
+│ └── tinylang/
+│      └── __init__.py
+├── pyproject.toml
+├── README.md
+├── .gitignore
+```
+### Why use `src/` layout?
+
+Using a `src/` directory prevents accidental imports from the project root during development.
+
+This ensures imports behave the same way they would after installation.
+
+Example import:
+
+```python
+from tinylang.token import Token
 ```
 
-Now create folders:
+This only works properly when the package is installed or run correctly, which is intentional.
 
-```
+## 2. Create the Folder Structure
+
+From your projects directory:
+```bash
+mkdir Tiny-Lang-Interpreter
+cd Tiny-Lang-Interpreter
 mkdir -p src/tinylang
 ```
 
-### 2. Create the required files
+Created:
+```bash
+src/tinylang/__init__.py
+```
 
-#### src/tinylang/__init__.py
+The `__init__.py` file is empty for now and marks `tinylang` as a Python package.
 
-Empty for now.
+## 3. Create `pyproject.toml`
 
-#### pyproject.toml
+Defined project metadata in `pyproject.toml` and prepared the project for editable installation:
 
-```toml
+```
 [project]
 name = "tinylang"
 version = "0.1.0"
@@ -36,83 +76,90 @@ dev = ["pytest"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 ```
-#### .gitignore
 
-Add the files to ignore as needed.
+## 4. Configure .gitignore
+
+Used a minimal but sufficient configuration:
 
 ```
-# Python bytecode / cache
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
+# Virtual environment
 .venv/
-venv/
-env/
 
-# Environment variables
-.env
+# Python cache
+__pycache__/
+*.pyc
 
-# Packaging / build artifacts
+# Packaging artifacts
+*.egg-info/
 build/
 dist/
-*.egg-info/
-pip-wheel-metadata/
-
-# Testing / coverage
-.coverage
-htmlcov/
-.pytest_cache/
-
-# IDE / Editor settings
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
 ```
-#### README.md
 
-Give an overview of the project.
+This prevents committing:
 
-### 3. Set up the environment
+- virtual environment files
+- Python bytecode
+- packaging/build artifacts
 
-From project root file:
+## 5. Set Up the Virtual Environment
 
+Created a virtual environment to isolate dependencies.
+
+From the project root:
 ```bash
 python -m venv .venv
 ```
 
-Activate it:
-
-(Windows Command Promt)
-
-```
+Activate (Windows Command Prompt):
+```bash
 .venv\Scripts\activate.bat
 ```
 
-### 4. Install the Package locally
+## 6. Install the Project Locally (Editable Mode)
 
-After activation, now run:
+After activating the environment:
+```
+pip install -e .
+```
 
+This allows changes in `src/tinylang` to be reflected immediately without reinstalling the package.
+
+If using development dependencies:
 ```
 pip install -e ".[dev]"
 ```
 
-Test it works in the activated env:
-
+Test that installation works:
 ```
 python -c "import tinylang; print('OK')"
 ```
 
-If it prints OK → you’re correctly set up.
+If it prints `OK`, the package is correctly installed.
 
-Deactivate env:
-
+Deactivate when finished:
 ```
 deactivate
 ```
+
+## 7. README Setup
+
+Documented:
+
+- How to create the virtual environment
+- How to activate it
+- How to install the project
+- How to deactivate the environment
+
+This ensures anyone can clone and run the project easily.
+
+## Result of Setup Phase
+
+At the end of this step, Tiny-Lang had:
+
+- Proper package structure
+- Isolated Python environment
+- Clean Git history
+- Installation configuration
+- Documentation for reproducibility
+
+No interpreter logic yet — only infrastructure.
