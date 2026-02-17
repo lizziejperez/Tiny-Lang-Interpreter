@@ -38,6 +38,8 @@ pythonpath = ["src"]
 ```
 #### .gitignore
 
+Add the files to ignore as needed.
+
 ```
 # Python bytecode / cache
 __pycache__/
