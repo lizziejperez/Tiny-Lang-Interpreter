@@ -1,4 +1,5 @@
 from enum import Enum, auto
+from typing import Optional
 
 class TokenKind(Enum):
     """
@@ -117,3 +118,23 @@ KEYWORDS: dict[str, TokenKind] = {
     "lest": TokenKind.ELSE,
     "whilst": TokenKind.WHILE,
 }
+
+class Token:
+    """
+    Represents a single lexical token produced by the lexer.
+
+    Attributes:
+        kind (TokenKind): The classification of the token.
+        src (str): The exact substring from the source code.
+        line (int): 1-based line number where the token begins.
+        col (int): 1-based column number where the token begins.
+        value (Optional[object]): Parsed value of the token
+            (e.g., int(src) for INT tokens).
+    """
+
+    def __init__( self, kind: TokenKind, src: str, line: int, col: int, value: Optional[object] = None) -> None:
+        self.kind = kind
+        self.src = src
+        self.line = line
+        self.col = col
+        self.value = value
