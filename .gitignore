@@ -1,33 +1,8 @@
-# Python bytecode / cache
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
+# Virtual environment
 .venv/
-venv/
-env/
 
-# Environment variables
-.env
+# Python cache
+__pycache__/
 
-# Packaging / build artifacts
-build/
-dist/
+# Packaging artifacts
 *.egg-info/
-pip-wheel-metadata/
-
-# Testing / coverage
-.coverage
-htmlcov/
-.pytest_cache/
-
-# IDE / Editor settings
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
