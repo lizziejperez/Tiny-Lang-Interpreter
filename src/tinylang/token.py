@@ -86,3 +86,34 @@ class TokenKind(Enum):
     RBRACE = auto()
     COMMA = auto()
     SEMICOLON = auto()
+
+"""
+Mapping of reserved keyword strings to their corresponding TokenKind.
+
+When the lexer reads an identifier (NAME), it checks this table to
+determine whether the identifier is actually a reserved keyword.
+
+Example:
+    "let"   -> TokenKind.LET
+    "print" -> TokenKind.PRINT
+
+If an identifier is not found in this table, it remains TokenKind.NAME.
+"""
+KEYWORDS: dict[str, TokenKind] = {
+    # Standard
+    "let": TokenKind.LET,
+    "fn": TokenKind.FUNC,
+    "return": TokenKind.RETURN,
+    "if": TokenKind.IF,
+    "else": TokenKind.ELSE,
+    "while": TokenKind.WHILE,
+    "print": TokenKind.PRINT,
+
+    # Fantasy aliases
+    "conjure": TokenKind.LET,
+    "ritual": TokenKind.FUNC,
+    "bestow": TokenKind.RETURN,
+    "upon": TokenKind.IF,
+    "lest": TokenKind.ELSE,
+    "whilst": TokenKind.WHILE,
+}
