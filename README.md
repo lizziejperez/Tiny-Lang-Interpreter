@@ -17,6 +17,57 @@ Build this project incrementally:
 - Parser (AST generation)
 - Interpreter (evaluation engine)
 
+## Development Stages
+
+Tiny-Lang is being built incrementally in clearly defined phases:
+
+### Stage 1: Project Setup
+
+- Structured `src/`-based package layout
+- Virtual environment configuration
+- Editable installation via `pip install -e` .
+- Clean `.gitignore`
+- Setup documentation
+
+### Stage 2: Token System
+
+- `TokenKind` enum definition
+- Keyword mapping (including fantasy aliases)
+- `Token` data model
+- Line/column tracking for error reporting
+
+### Stage 3: Lexer (Ongoing)
+
+- Character scanning utilities (`advance`, `peek`)
+- Whitespace handling
+- Token generation
+- Support for:
+    - Operators
+    - Delimiters
+    - Integers
+    - Identifiers & keywords
+- Error handling for illegal characters
+
+### Stage 4: Parser (Planned)
+
+- AST node definitions
+- Expression parsing
+-Statement parsing
+- Function definitions and control flow
+
+### Stage 5: Interpreter
+
+- AST evaluation
+- Environment/scope handling
+- Function execution
+- Control flow execution
+
+### Stage 6: Error Handling & Polish
+
+- Improved error messages
+- Better diagnostics using line/column tracking
+- Cleanup and refactoring
+
 ## Development Setup
 
 ### 1. Clone the Repository
