@@ -83,3 +83,21 @@ The lexer (later) should produce tokens like:
 - `INT('10') value=10`
 - `SEMICOLON(';')`
 - `EOF`
+
+## Running Token Tests
+
+This section describes how to run the token system tests (`test_token.py`).
+
+From the project root:
+
+```bash
+pytest
+```
+
+You should see output similar to:
+
+```
+5 passed
+```
+
+If all tests pass, the token system is functioning as expected.
