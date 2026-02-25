@@ -1,4 +1,4 @@
-# Project Setup (Tiny-Lang)
+# 01 - Project Setup
 
 ## Goal
 

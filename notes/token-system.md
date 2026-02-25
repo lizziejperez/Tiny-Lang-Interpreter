@@ -1,4 +1,4 @@
-# Token System (token.py)
+# 02 - Token System (`token.py`)
 
 ## Goal
 
