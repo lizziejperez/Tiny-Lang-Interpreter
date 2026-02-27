@@ -102,6 +102,24 @@ class Lexer:
         if ch == "/":
             self.advance()
             return Token(TokenKind.SLASH, "/", tok_line, tok_col)
+        
+        # Delimiters: parentheses and braces
+
+        if ch == "(":
+            self.advance()
+            return Token(TokenKind.LPAREN, "(", tok_line, tok_col)
+
+        if ch == ")":
+            self.advance()
+            return Token(TokenKind.RPAREN, ")", tok_line, tok_col)
+
+        if ch == "{":
+            self.advance()
+            return Token(TokenKind.LBRACE, "{", tok_line, tok_col)
+
+        if ch == "}":
+            self.advance()
+            return Token(TokenKind.RBRACE, "}", tok_line, tok_col)
             
         # Temporary fallback: unhandled characters currently return EOF
         return Token(TokenKind.EOF, "", self.line, self.col)

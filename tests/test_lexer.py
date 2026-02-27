@@ -29,3 +29,14 @@ def test_arithmetic_operators():
         TokenKind.SLASH,
         TokenKind.EOF,
     ]
+
+def test_parentheses_and_braces():
+    tokens = collect_tokens("() {}")
+
+    assert tokens == [
+        TokenKind.LPAREN,
+        TokenKind.RPAREN,
+        TokenKind.LBRACE,
+        TokenKind.RBRACE,
+        TokenKind.EOF,
+    ]
