@@ -85,3 +85,16 @@ def test_integer_literals():
     assert toks[1].kind == TokenKind.INT and toks[1].src == "0" and toks[1].value == 0
     assert toks[2].kind == TokenKind.INT and toks[2].src == "420" and toks[2].value == 420
     assert toks[3].kind == TokenKind.EOF
+
+def test_names_and_keywords():
+    kinds = collect_kinds("let x conjure y whilst z")
+
+    assert kinds == [
+        TokenKind.LET,
+        TokenKind.NAME,
+        TokenKind.LET,     # conjure alias
+        TokenKind.NAME,
+        TokenKind.WHILE,   # whilst alias
+        TokenKind.NAME,
+        TokenKind.EOF,
+    ]

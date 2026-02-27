@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from tinylang.token import Token, TokenKind
+from tinylang.token import Token, TokenKind, KEYWORDS
 
 
 class Lexer:
@@ -8,9 +8,11 @@ class Lexer:
     Converts source text into a stream of Token objects.
 
     This lexer is implemented incrementally and currently supports:
-    - Operators and delimiters
+    - Arithmetic and comparison operators (single- and multi-character)
+    - Delimiters (parentheses, braces, comma, semicolon)
     - Integer literals
-    - Line/column tracking
+    - Identifiers and keyword resolution (via KEYWORDS map)
+    - Line and column tracking for error reporting
     """
 
     def __init__(self, source: str) -> None:
@@ -82,17 +84,36 @@ class Lexer:
             self.advance()
 
         return self.source[start:self.pos]
+    
+    def read_name(self) -> str:
+        """
+        Read an identifier-like sequence:
+        starts with a letter or underscore, then letters/digits/underscore.
+        """
+        start = self.pos
+
+        while True:
+            ch = self.current_char()
+            if ch is None:
+                break
+            if ch.isalnum() or ch == "_":
+                self.advance()
+                continue
+            break
+
+        return self.source[start:self.pos]
 
     # Tokenization Function
 
     def next_token(self) -> Token:
         """
-        Return the next token.
+        Return the next token from the input stream.
 
         Currently supports:
-        - Operators
+        - Arithmetic and comparison operators
         - Delimiters
         - Integer literals
+        - Identifiers (resolved to keywords if present in KEYWORDS)
         """
         self.skip_whitespace()
 
@@ -107,6 +128,7 @@ class Lexer:
         tok_col = self.col
 
         # Multi-character operators (must be checked before single-character versions)
+        
         nxt = self.peek_char()
 
         if ch == "=" and nxt == "=":
@@ -167,8 +189,17 @@ class Lexer:
         if ch.isdigit():
             lex = self.read_number()
             return Token(TokenKind.INT, lex, tok_line, tok_col, value=int(lex))
+        
+        # Identifiers and keywords:
+        # - Must start with a letter or underscore
+        # - May contain letters, digits, or underscores
+        # - Resolved to keyword if present in KEYWORDS
+        if ch.isalpha() or ch == "_":
+            lex = self.read_name()
+            kind = KEYWORDS.get(lex, TokenKind.NAME)
+            return Token(kind, lex, tok_line, tok_col)
 
-        # Delimiters: parentheses, braces, comma, and semicolon
+        # Delimiters
 
         if ch == "(":
             self.advance()
