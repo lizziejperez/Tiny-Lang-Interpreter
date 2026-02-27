@@ -71,3 +71,15 @@ def test_multi_char_operators():
         TokenKind.GTE,
         TokenKind.EOF,
     ]
+
+def test_integer_literals():
+    lx = Lexer("10 0 420")
+    tok1 = lx.next_token()
+    tok2 = lx.next_token()
+    tok3 = lx.next_token()
+    tok4 = lx.next_token()
+
+    assert tok1.kind == TokenKind.INT and tok1.src == "10" and tok1.value == 10
+    assert tok2.kind == TokenKind.INT and tok2.src == "0" and tok2.value == 0
+    assert tok3.kind == TokenKind.INT and tok3.src == "420" and tok3.value == 420
+    assert tok4.kind == TokenKind.EOF

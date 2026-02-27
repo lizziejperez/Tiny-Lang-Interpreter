@@ -7,8 +7,10 @@ class Lexer:
     """
     Converts source text into a stream of Token objects.
 
-    Note: This initial version only implements cursor tracking and returns EOF.
-    Tokenization logic will be added incrementally.
+    This lexer is implemented incrementally and currently supports:
+    - Operators and delimiters
+    - Integer literals
+    - Line/column tracking
     """
 
     def __init__(self, source: str) -> None:
@@ -64,6 +66,22 @@ class Lexer:
                 self.advance()
                 continue
             return
+    
+    def read_number(self) -> str:
+        """
+        Read consecutive digits and return the full number lexeme.
+
+        Leaves the cursor positioned at the first non-digit character.
+        """
+        start = self.pos
+
+        while True:
+            ch = self.current_char()
+            if (ch is None) or (not ch.isdigit()):
+                break
+            self.advance()
+
+        return self.source[start:self.pos]
 
     # Tokenization Function
 
@@ -72,9 +90,9 @@ class Lexer:
         Return the next token.
 
         Currently supports:
-        - Arithmetic operators
-        - Comparison operators (single- and multi-character)
+        - Operators
         - Delimiters
+        - Integer literals
         """
         self.skip_whitespace()
 
@@ -111,7 +129,7 @@ class Lexer:
             self.advance()
             return Token(TokenKind.GTE, ">=", tok_line, tok_col)
         
-        # Operators: assignment, logical, comparison (single-character)
+        # Single-character operators
 
         if ch == "=":
             self.advance()
@@ -128,9 +146,7 @@ class Lexer:
         if ch == ">":
             self.advance()
             return Token(TokenKind.GT, ">", tok_line, tok_col)
-
-        # Basic arithmetic operators
-
+        
         if ch == "+":
             self.advance()
             return Token(TokenKind.PLUS, "+", tok_line, tok_col)
@@ -146,7 +162,12 @@ class Lexer:
         if ch == "/":
             self.advance()
             return Token(TokenKind.SLASH, "/", tok_line, tok_col)
-        
+
+        # Integer literals
+        if ch.isdigit():
+            lex = self.read_number()
+            return Token(TokenKind.INT, lex, tok_line, tok_col, value=int(lex))
+
         # Delimiters: parentheses, braces, comma, and semicolon
 
         if ch == "(":
