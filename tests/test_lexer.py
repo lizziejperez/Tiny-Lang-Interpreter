@@ -1,28 +1,42 @@
+from __future__ import annotations
+
+from typing import List
+
 from tinylang.lexer import Lexer
-from tinylang.token import TokenKind
+from tinylang.token import Token, TokenKind
 
-def test_skip_whitespace_only():
-    lx = Lexer("   \n\t  ")
-    tok = lx.next_token()
+# Helpers
 
-    assert tok.kind == TokenKind.EOF
-
-def collect_tokens(source: str):
+def collect_kinds(source: str) -> list[TokenKind]:
+    """Return a list of TokenKind values until EOF."""
     lx = Lexer(source)
-    tokens = []
-
+    kinds: list[TokenKind] = []
     while True:
         tok = lx.next_token()
-        tokens.append(tok.kind)
+        kinds.append(tok.kind)
         if tok.kind == TokenKind.EOF:
             break
+    return kinds
 
-    return tokens
+def collect_tokens(source: str) -> list[Token]:
+    """Return a list of Token objects until EOF."""
+    lx = Lexer(source)
+    toks: list[Token] = []
+    while True:
+        tok = lx.next_token()
+        toks.append(tok)
+        if tok.kind == TokenKind.EOF:
+            break
+    return toks
+
+# Tests
+
+def test_skip_whitespace_only():
+    kinds = collect_kinds("   \n\t  ")
+    assert kinds == [TokenKind.EOF]
 
 def test_arithmetic_operators():
-    tokens = collect_tokens("+ - * /")
-
-    assert tokens == [
+    assert collect_kinds("+ - * /") == [
         TokenKind.PLUS,
         TokenKind.MINUS,
         TokenKind.STAR,
@@ -31,9 +45,7 @@ def test_arithmetic_operators():
     ]
 
 def test_parentheses_and_braces():
-    tokens = collect_tokens("() {}")
-
-    assert tokens == [
+    assert collect_kinds("() {}") == [
         TokenKind.LPAREN,
         TokenKind.RPAREN,
         TokenKind.LBRACE,
@@ -42,18 +54,14 @@ def test_parentheses_and_braces():
     ]
 
 def test_comma_and_semicolon():
-    tokens = collect_tokens(", ;")
-
-    assert tokens == [
+    assert collect_kinds(", ;") == [
         TokenKind.COMMA,
         TokenKind.SEMICOLON,
         TokenKind.EOF,
     ]
 
 def test_single_char_operators():
-    tokens = collect_tokens("= ! < >")
-
-    assert tokens == [
+    assert collect_kinds("= ! < >") == [
         TokenKind.EQUAL,
         TokenKind.NOT,
         TokenKind.LT,
@@ -62,9 +70,7 @@ def test_single_char_operators():
     ]
 
 def test_multi_char_operators():
-    tokens = collect_tokens("== != <= >=")
-
-    assert tokens == [
+    assert collect_kinds("== != <= >=") == [
         TokenKind.EQEQ,
         TokenKind.NEQ,
         TokenKind.LTE,
@@ -73,13 +79,9 @@ def test_multi_char_operators():
     ]
 
 def test_integer_literals():
-    lx = Lexer("10 0 420")
-    tok1 = lx.next_token()
-    tok2 = lx.next_token()
-    tok3 = lx.next_token()
-    tok4 = lx.next_token()
+    toks = collect_tokens("10 0 420")
 
-    assert tok1.kind == TokenKind.INT and tok1.src == "10" and tok1.value == 10
-    assert tok2.kind == TokenKind.INT and tok2.src == "0" and tok2.value == 0
-    assert tok3.kind == TokenKind.INT and tok3.src == "420" and tok3.value == 420
-    assert tok4.kind == TokenKind.EOF
+    assert toks[0].kind == TokenKind.INT and toks[0].src == "10" and toks[0].value == 10
+    assert toks[1].kind == TokenKind.INT and toks[1].src == "0" and toks[1].value == 0
+    assert toks[2].kind == TokenKind.INT and toks[2].src == "420" and toks[2].value == 420
+    assert toks[3].kind == TokenKind.EOF
