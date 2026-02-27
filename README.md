@@ -36,7 +36,7 @@ Tiny-Lang is being built incrementally in clearly defined phases:
 - `Token` data model
 - Line/column tracking for error reporting
 
-### Stage 3: Lexer (Ongoing)
+### Stage 3: Lexer
 
 - Character scanning utilities (`advance`, `peek`)
 - Whitespace handling
@@ -48,14 +48,14 @@ Tiny-Lang is being built incrementally in clearly defined phases:
     - Identifiers & keywords
 - Error handling for illegal characters
 
-### Stage 4: Parser (Planned)
+### Stage 4: Parser (Ongoing)
 
 - AST node definitions
 - Expression parsing
 -Statement parsing
 - Function definitions and control flow
 
-### Stage 5: Interpreter
+### Stage 5: Interpreter (Planned)
 
 - AST evaluation
 - Environment/scope handling
