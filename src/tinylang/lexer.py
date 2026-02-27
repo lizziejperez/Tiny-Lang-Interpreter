@@ -71,7 +71,37 @@ class Lexer:
         """
         Return the next token.
 
-        Note: Currently only returns EOF (after skipping whitespace).
+        Note: Currently only supports basic arithmetic operators.
         """
         self.skip_whitespace()
+
+        ch = self.current_char()
+
+        # Handle end of input, return EOF
+        if ch is None:
+            return Token(TokenKind.EOF, "", self.line, self.col)
+
+        # Capture token start position before consuming characters
+        tok_line = self.line
+        tok_col = self.col
+
+        # Basic arithmetic operators
+
+        if ch == "+":
+            self.advance()
+            return Token(TokenKind.PLUS, "+", tok_line, tok_col)
+
+        if ch == "-":
+            self.advance()
+            return Token(TokenKind.MINUS, "-", tok_line, tok_col)
+
+        if ch == "*":
+            self.advance()
+            return Token(TokenKind.STAR, "*", tok_line, tok_col)
+
+        if ch == "/":
+            self.advance()
+            return Token(TokenKind.SLASH, "/", tok_line, tok_col)
+            
+        # Temporary fallback: unhandled characters currently return EOF
         return Token(TokenKind.EOF, "", self.line, self.col)
