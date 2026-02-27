@@ -48,12 +48,30 @@ class Lexer:
         if next_pos >= len(self.source):
             return None
         return self.source[next_pos]
+    
+    def skip_whitespace(self) -> None:
+        """
+        Advance past any whitespace characters.
+
+        Note: Whitespace includes spaces, tabs, carriage returns, and newlines.
+        Newlines are handled in `advance()` so line/col tracking stays correct.
+        """
+        while True:
+            ch = self.current_char()
+            if ch is None:
+                return
+            if ch in (" ", "\t", "\r", "\n"):
+                self.advance()
+                continue
+            return
 
     # Tokenization Function
 
     def next_token(self) -> Token:
         """
         Return the next token.
-        Note: Currently only returns EOF.
+
+        Note: Currently only returns EOF (after skipping whitespace).
         """
+        self.skip_whitespace()
         return Token(TokenKind.EOF, "", self.line, self.col)
