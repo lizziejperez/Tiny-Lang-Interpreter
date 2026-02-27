@@ -73,7 +73,7 @@ class Lexer:
 
         Currently supports:
         - Arithmetic operators
-        - Single-character comparison operators
+        - Comparison operators (single- and multi-character)
         - Delimiters
         """
         self.skip_whitespace()
@@ -88,23 +88,28 @@ class Lexer:
         tok_line = self.line
         tok_col = self.col
 
-        # Basic arithmetic operators
+        # Multi-character operators (must be checked before single-character versions)
+        nxt = self.peek_char()
 
-        if ch == "+":
+        if ch == "=" and nxt == "=":
             self.advance()
-            return Token(TokenKind.PLUS, "+", tok_line, tok_col)
+            self.advance()
+            return Token(TokenKind.EQEQ, "==", tok_line, tok_col)
 
-        if ch == "-":
+        if ch == "!" and nxt == "=":
             self.advance()
-            return Token(TokenKind.MINUS, "-", tok_line, tok_col)
+            self.advance()
+            return Token(TokenKind.NEQ, "!=", tok_line, tok_col)
 
-        if ch == "*":
+        if ch == "<" and nxt == "=":
             self.advance()
-            return Token(TokenKind.STAR, "*", tok_line, tok_col)
+            self.advance()
+            return Token(TokenKind.LTE, "<=", tok_line, tok_col)
 
-        if ch == "/":
+        if ch == ">" and nxt == "=":
             self.advance()
-            return Token(TokenKind.SLASH, "/", tok_line, tok_col)
+            self.advance()
+            return Token(TokenKind.GTE, ">=", tok_line, tok_col)
         
         # Operators: assignment, logical, comparison (single-character)
 
@@ -123,6 +128,24 @@ class Lexer:
         if ch == ">":
             self.advance()
             return Token(TokenKind.GT, ">", tok_line, tok_col)
+
+        # Basic arithmetic operators
+
+        if ch == "+":
+            self.advance()
+            return Token(TokenKind.PLUS, "+", tok_line, tok_col)
+
+        if ch == "-":
+            self.advance()
+            return Token(TokenKind.MINUS, "-", tok_line, tok_col)
+
+        if ch == "*":
+            self.advance()
+            return Token(TokenKind.STAR, "*", tok_line, tok_col)
+
+        if ch == "/":
+            self.advance()
+            return Token(TokenKind.SLASH, "/", tok_line, tok_col)
         
         # Delimiters: parentheses, braces, comma, and semicolon
 

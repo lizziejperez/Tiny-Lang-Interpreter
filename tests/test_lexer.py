@@ -60,3 +60,14 @@ def test_single_char_operators():
         TokenKind.GT,
         TokenKind.EOF,
     ]
+
+def test_multi_char_operators():
+    tokens = collect_tokens("== != <= >=")
+
+    assert tokens == [
+        TokenKind.EQEQ,
+        TokenKind.NEQ,
+        TokenKind.LTE,
+        TokenKind.GTE,
+        TokenKind.EOF,
+    ]
