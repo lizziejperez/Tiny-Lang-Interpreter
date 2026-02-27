@@ -49,3 +49,14 @@ def test_comma_and_semicolon():
         TokenKind.SEMICOLON,
         TokenKind.EOF,
     ]
+
+def test_single_char_operators():
+    tokens = collect_tokens("= ! < >")
+
+    assert tokens == [
+        TokenKind.EQUAL,
+        TokenKind.NOT,
+        TokenKind.LT,
+        TokenKind.GT,
+        TokenKind.EOF,
+    ]

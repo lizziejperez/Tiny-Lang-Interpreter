@@ -71,7 +71,10 @@ class Lexer:
         """
         Return the next token.
 
-        Note: Currently only supports basic arithmetic operators.
+        Currently supports:
+        - Arithmetic operators
+        - Single-character comparison operators
+        - Delimiters
         """
         self.skip_whitespace()
 
@@ -103,6 +106,24 @@ class Lexer:
             self.advance()
             return Token(TokenKind.SLASH, "/", tok_line, tok_col)
         
+        # Operators: assignment, logical, comparison (single-character)
+
+        if ch == "=":
+            self.advance()
+            return Token(TokenKind.EQUAL, "=", tok_line, tok_col)
+
+        if ch == "!":
+            self.advance()
+            return Token(TokenKind.NOT, "!", tok_line, tok_col)
+
+        if ch == "<":
+            self.advance()
+            return Token(TokenKind.LT, "<", tok_line, tok_col)
+
+        if ch == ">":
+            self.advance()
+            return Token(TokenKind.GT, ">", tok_line, tok_col)
+        
         # Delimiters: parentheses, braces, comma, and semicolon
 
         if ch == "(":
@@ -130,4 +151,4 @@ class Lexer:
             return Token(TokenKind.SEMICOLON, ";", tok_line, tok_col)
             
         # Temporary fallback: unhandled characters currently return EOF
-        return Token(TokenKind.EOF, "", self.line, self.col)
+        return Token(TokenKind.EOF, "", tok_line, tok_col)
