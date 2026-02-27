@@ -7,12 +7,12 @@ class Lexer:
     """
     Converts source text into a stream of Token objects.
 
-    This lexer is implemented incrementally and currently supports:
-    - Arithmetic and comparison operators (single- and multi-character)
-    - Delimiters (parentheses, braces, comma, semicolon)
-    - Integer literals
-    - Identifiers and keyword resolution (via KEYWORDS map)
-    - Line and column tracking for error reporting
+    The lexer is responsible for:
+    - Breaking raw input into lexical tokens
+    - Classifying lexemes into TokenKind categories
+    - Tracking line and column positions for error reporting
+
+    Token categories currently supported include operators, delimiters, literals, identifiers, and keywords.
     """
 
     def __init__(self, source: str) -> None:
@@ -87,8 +87,10 @@ class Lexer:
     
     def read_name(self) -> str:
         """
-        Read an identifier-like sequence:
-        starts with a letter or underscore, then letters/digits/underscore.
+        Read an identifier-like sequence starting at the current position.
+
+        Assumes the current character is a valid identifier start (letter or underscore).
+        Consumes letters/digits/underscores.
         """
         start = self.pos
 
@@ -109,17 +111,16 @@ class Lexer:
         """
         Return the next token from the input stream.
 
-        Currently supports:
-        - Arithmetic and comparison operators
-        - Delimiters
-        - Integer literals
-        - Identifiers (resolved to keywords if present in KEYWORDS)
+        Skips whitespace and returns:
+        - A valid token when recognized
+        - ILLEGAL for unrecognized characters
+        - EOF when the end of input is reached
         """
         self.skip_whitespace()
 
         ch = self.current_char()
 
-        # Handle end of input, return EOF
+        # Handle end of input
         if ch is None:
             return Token(TokenKind.EOF, "", self.line, self.col)
 
@@ -225,5 +226,6 @@ class Lexer:
             self.advance()
             return Token(TokenKind.SEMICOLON, ";", tok_line, tok_col)
             
-        # Temporary fallback: unhandled characters currently return EOF
-        return Token(TokenKind.EOF, "", tok_line, tok_col)
+        # Handle unrecognized character
+        self.advance()
+        return Token(TokenKind.ILLEGAL, ch, tok_line, tok_col)

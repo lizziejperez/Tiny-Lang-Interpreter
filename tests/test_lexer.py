@@ -98,3 +98,16 @@ def test_names_and_keywords():
         TokenKind.NAME,
         TokenKind.EOF,
     ]
+
+def test_unrecognized_characters():
+    toks = collect_tokens("@ # $ ? : ' \" \\")
+
+    assert toks[0].kind == TokenKind.ILLEGAL and toks[0].src == "@"
+    assert toks[1].kind == TokenKind.ILLEGAL and toks[1].src == "#"
+    assert toks[2].kind == TokenKind.ILLEGAL and toks[2].src == "$"
+    assert toks[3].kind == TokenKind.ILLEGAL and toks[3].src == "?"
+    assert toks[4].kind == TokenKind.ILLEGAL and toks[4].src == ":"
+    assert toks[5].kind == TokenKind.ILLEGAL and toks[5].src == "'"
+    assert toks[6].kind == TokenKind.ILLEGAL and toks[6].src == "\""
+    assert toks[7].kind == TokenKind.ILLEGAL and toks[7].src == "\\"
+    assert toks[8].kind == TokenKind.EOF
