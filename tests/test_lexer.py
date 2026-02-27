@@ -40,3 +40,12 @@ def test_parentheses_and_braces():
         TokenKind.RBRACE,
         TokenKind.EOF,
     ]
+
+def test_comma_and_semicolon():
+    tokens = collect_tokens(", ;")
+
+    assert tokens == [
+        TokenKind.COMMA,
+        TokenKind.SEMICOLON,
+        TokenKind.EOF,
+    ]

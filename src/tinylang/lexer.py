@@ -103,7 +103,7 @@ class Lexer:
             self.advance()
             return Token(TokenKind.SLASH, "/", tok_line, tok_col)
         
-        # Delimiters: parentheses and braces
+        # Delimiters: parentheses, braces, comma, and semicolon
 
         if ch == "(":
             self.advance()
@@ -120,6 +120,14 @@ class Lexer:
         if ch == "}":
             self.advance()
             return Token(TokenKind.RBRACE, "}", tok_line, tok_col)
+        
+        if ch == ",":
+            self.advance()
+            return Token(TokenKind.COMMA, ",", tok_line, tok_col)
+
+        if ch == ";":
+            self.advance()
+            return Token(TokenKind.SEMICOLON, ";", tok_line, tok_col)
             
         # Temporary fallback: unhandled characters currently return EOF
         return Token(TokenKind.EOF, "", self.line, self.col)
