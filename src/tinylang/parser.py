@@ -60,7 +60,7 @@ class Parser:
         Otherwise return False.
         """
         for kind in kinds:
-            if self.check(kind):
+            if self.check_kind(kind):
                 self.advance()
                 return True
         return False
@@ -69,7 +69,7 @@ class Parser:
         """
         Consume the expected token kind or raise ParseError.
         """
-        if self.check(kind):
+        if self.check_kind(kind):
             return self.advance()
 
         tok = self.current
