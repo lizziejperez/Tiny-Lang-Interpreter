@@ -21,8 +21,8 @@ The parser will be responsible for:
 
 The parser will be implemented incrementally in increasing levels of language complexity:
 
-1. Build parser skeleton and token navigation utilities (*ongoing*)
-2. Define minimal AST node structure (*planned*)
+1. Build parser skeleton and token navigation utilities 
+2. Define minimal AST node structure (**ongoing**)
 3. Parse primary expressions
 4. Implement operator precedence parsing
 5. Parse statements (print, expression statements)
