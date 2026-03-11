@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import List
 
@@ -46,3 +48,20 @@ class Name(Expr):
     ex: x
     """
     name: str
+
+# Statements
+# Statement nodes represent executable instructions in the program.
+
+@dataclass(frozen=True)
+class ExprStmt(Stmt):
+    """
+    Expression statement.
+
+    Wraps an expression so it can appear where a statement is required.
+    This occurs when an expression is written as a standalone instruction.
+
+    ex:
+        1 + 2;
+        x;
+    """
+    expr: Expr  # the expression being evaluated
