@@ -72,7 +72,7 @@ Tiny-Lang is being built incrementally in clearly defined phases:
 
 ### 1. Clone the Repository
 
-```
+```bash
 git clone https://github.com/lizziejperez/tiny-lang-interpreter.git
 cd tiny-lang-interpreter
 ```
@@ -81,7 +81,7 @@ cd tiny-lang-interpreter
 
 Within the local repo directory:
 
-```
+```bash
 python -m venv .venv
 ```
 
@@ -91,7 +91,7 @@ python -m venv .venv
 
 (PowerShell)
 
-```
+```bash
 .venv\Scripts\Activate.ps1
 ```
 
@@ -99,26 +99,22 @@ If PowerShell blocks scripts, use Command Prompt instead.
 
 (Command Prompt)
 
-```
+```bash
 .venv\Scripts\activate.bat
 ```
 
 #### macOS / Linux
 
-```
+```bash
 source .venv/bin/activate
 ```
 
 #### Verify
 
-When activated, your terminal should show:
-
-```
-(.venv)
-```
+When activated, your terminal should show: `(.venv)`
 
 ### 4. Install the Package (Editable Mode)
-```
+```bash
 pip install -e ".[dev]"
 ```
 
@@ -127,22 +123,47 @@ This installs:
 - Development dependencies (e.g., pytest)
 
 ### 5. Verify Installation
-```
+```bash
 python -c "import tinylang; print('TinyLang ready')"
 ```
 
-If you see:
+If you see `TinyLang ready`, the environment is set up correctly.
+
+### 6. Run the Test Suite
+
+Tiny-Lang uses pytest for automated testing.
+
+From the project root directory, run:
+```bash
+pytest
 ```
-TinyLang ready
+You should see output similar to:
+```
+============================= test session starts =============================
+collected X items
+
+tests/test_lexer.py ..... 
+tests/test_parser.py ....
+
+============================== X passed in 0.XXs ==============================
+```
+If all tests pass, the project is installed and working correctly.
+
+#### Run a Specific Test File
+```bash
+pytest tests/test_lexer.py
 ```
 
-The environment is set up correctly.
+#### Run a Specific Test Function
+```bash
+pytest tests/test_lexer.py::test_integer_literals
+```
 
 ### Deactivating the Virtual Environment
 
 To exit the virtual environment:
-```
+```bash
 deactivate
 ```
 
-Your terminal will no longer show (.venv).
+Your terminal will no longer show `(.venv)`.
