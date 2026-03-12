@@ -49,6 +49,17 @@ class Name(Expr):
     """
     name: str
 
+@dataclass(frozen=True)
+class GroupingExpr(Expr):
+    """
+    Grouped expression.
+
+    Represents an expression wrapped in parentheses.
+    ex:
+        (1 + 2)
+    """
+    expr: Expr  # inner expression inside the parentheses
+
 # Statements
 # Statement nodes represent executable instructions in the program.
 
