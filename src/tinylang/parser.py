@@ -5,6 +5,7 @@ from typing import Optional
 
 from tinylang.lexer import Lexer
 from tinylang.token import Token, TokenKind
+from tinylang.ast import Program, Expr, Stmt, IntLiteral, Name, GroupingExpr, ExprStmt
 
 
 @dataclass(frozen=True) # immutable error data (message + source position)
@@ -24,7 +25,11 @@ class Parser:
     """
     Consumes tokens and builds an AST (Abstract Syntax Tree).
 
-    This initial version focuses on token navigation utilities.
+    This initial parser supports:
+    - integer literals
+    - identifier expressions
+    - grouped expressions
+    - expression statements
     """
 
     def __init__(self, lexer: Lexer) -> None:
@@ -43,9 +48,7 @@ class Parser:
         return self.current.kind == TokenKind.EOF
 
     def advance(self) -> Token:
-        """
-        Consume and return the current token, moving to the next token.
-        """
+        """Consume and return the current token, moving to the next token."""
         self.previous = self.current
         self.current = self.lexer.next_token()
         return self.previous
@@ -66,9 +69,7 @@ class Parser:
         return False
 
     def expect(self, kind: TokenKind, message: str) -> Token:
-        """
-        Consume the expected token kind or raise ParseError.
-        """
+        """Consume the expected token kind or raise ParseError."""
         if self.check_kind(kind):
             return self.advance()
 
@@ -79,12 +80,77 @@ class Parser:
             col=tok.col,
         )
 
-    # Entry point (placeholder)
-    def parse(self):
-        """
-        Parse a full program.
+    # Expression parsing
 
-        Placeholder: returns an empty list for now.
-        Next step will return a Program AST node.
+    def parse_primary(self) -> Expr:
         """
-        return []
+        Parse the most basic expressions:
+        - integer literals
+        - identifiers
+        - parenthesized expressions
+        """
+        if self.match(TokenKind.INT):
+            tok = self.previous
+            assert tok is not None
+            assert isinstance(tok.value, int)
+            return IntLiteral(tok.value)
+
+        if self.match(TokenKind.NAME):
+            tok = self.previous
+            assert tok is not None
+            return Name(tok.src)
+
+        if self.match(TokenKind.LPAREN):
+            expr = self.parse_expression()
+            self.expect(TokenKind.RPAREN, "Expected ')' after expression")
+            return GroupingExpr(expr)
+
+        tok = self.current
+        raise ParseError(
+            message=f"Expected expression (found {tok.kind.name} {tok.src!r})",
+            line=tok.line,
+            col=tok.col,
+        )
+
+    def parse_expression(self) -> Expr:
+        """
+        Temporary expression entry point.
+
+        For now, expressions are only primary expressions.
+        Later this will become the top of the precedence ladder.
+        """
+        return self.parse_primary()
+
+    # Statement parsing
+
+    def parse_expr_stmt(self) -> ExprStmt:
+        """
+        Parse an expression statement.
+
+        Example:
+            10;
+            x;
+            (1);
+        """
+        expr = self.parse_expression()
+        self.expect(TokenKind.SEMICOLON, "Expected ';' after expression")
+        return ExprStmt(expr)
+
+    def parse_statement(self) -> Stmt:
+        """
+        Parse a single statement.
+
+        For now, only expression statements are supported.
+        """
+        return self.parse_expr_stmt()
+
+    # Program entry point
+
+    def parse(self) -> Program:
+        """Parse a full program into a Program AST node."""
+        statements: list[Stmt] = []
+
+        while not self.at_end():
+            statements.append(self.parse_statement())
+
+        return Program(statements)

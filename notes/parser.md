@@ -8,6 +8,19 @@ At this stage, the parser will **not** execute code — it will only build struc
 
 Status: **Ongoing implementation**
 
+## Current Capabilities
+
+The parser currently supports:
+
+- Integer literals (e.g., `123`)
+- Identifiers (e.g., `x`, `mana`)
+- Grouped expressions (e.g., `(1)`)
+- Expression statements (e.g., `10;`, `x;`)
+
+Expressions are currently limited to primary expressions.
+
+Operator precedence parsing has not yet been implemented.
+
 ## Responsibilities
 
 The parser will be responsible for:
@@ -21,9 +34,9 @@ The parser will be responsible for:
 
 The parser will be implemented incrementally in increasing levels of language complexity:
 
-1. Build parser skeleton and token navigation utilities 
-2. Define minimal AST node structure (**ongoing**)
-3. Parse primary expressions
+1. Build parser skeleton and token navigation utilities ✅
+2. Define minimal AST node structure ✅
+3. Parse primary expressions ✅
 4. Implement operator precedence parsing
 5. Parse statements (print, expression statements)
 6. Parse variable declarations (let)
@@ -47,13 +60,17 @@ Node categories:
 - `Expr` (expressions)
 - `Stmt` (statements)
 
-Example node types (planned):
+Example node types:
 
+Implemented:
 - `IntLiteral`
 - `Name`
+- `GroupingExpr`
+- `ExprStmt`
+
+Planned:
 - `Binary`
 - `Unary`
-- `ExprStmt`
 - `LetStmt`
 - `PrintStmt`
 - `BlockStmt`
