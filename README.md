@@ -82,6 +82,15 @@ These documents explain design decisions, implementation steps, and how each com
 
 ## Development Setup
 
+### 0. Requirements
+
+Ensure you have **Python (with pip)** installed.
+
+You can download the latest version from: [https://www.python.org/downloads/](https://www.python.org/downloads/)
+
+Tip (Windows):
+Make sure to check "Add Python to PATH" during installation.
+
 ### 1. Clone the Repository
 
 ```bash
