@@ -1,4 +1,4 @@
-# 04 - Parser (`parser.py`)
+# 04 - Parser (`parser.py`, `ast.py`)
 
 ## Goal
 
@@ -6,7 +6,7 @@ Implement a parser that consumes a stream of `Token` objects and produces an Abs
 
 At this stage, the parser will **not** execute code — it will only build structure.
 
-Status: **Planning / Not implemented yet**
+Status: **Ongoing implementation**
 
 ## Responsibilities
 
