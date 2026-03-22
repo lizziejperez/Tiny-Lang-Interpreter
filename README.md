@@ -8,6 +8,7 @@ With:
 - `let` variables
 - expressions: `+ - * /`, comparisons
 - `if/else`
+- unique fantasy name aliases
 
 ## Goal
 
@@ -52,7 +53,7 @@ Tiny-Lang is being built incrementally in clearly defined phases:
 
 - AST node definitions
 - Expression parsing
--Statement parsing
+- Statement parsing
 - Function definitions and control flow
 
 ### Stage 5: Interpreter (Planned)
@@ -67,6 +68,17 @@ Tiny-Lang is being built incrementally in clearly defined phases:
 - Improved error messages
 - Better diagnostics using line/column tracking
 - Cleanup and refactoring
+
+## Notes & Design Documentation
+
+Detailed notes for each stage of development can be found in the `notes/` directory.
+
+These documents explain design decisions, implementation steps, and how each component was built.
+
+* [Project Setup](notes/project-setup.md)
+* [Token System](notes/token-system.md)
+* [Lexer](notes/lexer.md)
+* [Parser](notes/parser.md)
 
 ## Development Setup
 
