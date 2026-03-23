@@ -60,6 +60,34 @@ class GroupingExpr(Expr):
     """
     expr: Expr  # inner expression inside the parentheses
 
+@dataclass(frozen=True)
+class UnaryExpr(Expr):
+    """
+    Unary expression.
+
+    Represents a unary operator applied to one operand.
+    ex:
+        -x
+        !flag
+    """
+    op: str
+    right: Expr
+
+
+@dataclass(frozen=True)
+class BinaryExpr(Expr):
+    """
+    Binary expression.
+
+    Represents an infix operator with a left and right operand.
+    ex:
+        1 + 2
+        x * y
+    """
+    left: Expr
+    op: str
+    right: Expr
+
 # Statements
 # Statement nodes represent executable instructions in the program.
 

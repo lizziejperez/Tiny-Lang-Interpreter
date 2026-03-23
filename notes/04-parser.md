@@ -37,7 +37,7 @@ The parser will be implemented incrementally in increasing levels of language co
 1. Build parser skeleton and token navigation utilities ✅
 2. Define minimal AST node structure ✅
 3. Parse primary expressions ✅
-4. Implement operator precedence parsing
+4. Implement operator precedence parsing ✅
 5. Parse statements (print, expression statements)
 6. Parse variable declarations (let)
 7. Parse control flow (if, while)
@@ -60,17 +60,17 @@ Node categories:
 - `Expr` (expressions)
 - `Stmt` (statements)
 
-Example node types:
+#### Example node types:
 
 Implemented:
 - `IntLiteral`
 - `Name`
 - `GroupingExpr`
 - `ExprStmt`
-
-Planned:
 - `Binary`
 - `Unary`
+
+Planned:
 - `LetStmt`
 - `PrintStmt`
 - `BlockStmt`

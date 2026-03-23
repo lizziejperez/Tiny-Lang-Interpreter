@@ -1,7 +1,7 @@
 from tinylang.lexer import Lexer
 from tinylang.parser import Parser, ParseError
 from tinylang.token import TokenKind
-from tinylang.ast import IntLiteral, Name, GroupingExpr
+from tinylang.ast import IntLiteral, Name, GroupingExpr, BinaryExpr, UnaryExpr
 
 
 def test_parser_advance_and_peek():
@@ -120,3 +120,140 @@ def test_parse_primary_error_on_non_expression_token():
     except ParseError as e:
         # Ensure the error message says an expression was expected
         assert "Expected expression" in str(e)
+
+def test_parse_unary_minus():
+    p = Parser(Lexer("-123"))
+
+    expr = p.parse_expression()
+
+    # Unary minus should parse into a UnaryExpr node
+    assert expr == UnaryExpr("-", IntLiteral(123))
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_unary_not():
+    p = Parser(Lexer("!mana"))
+
+    expr = p.parse_expression()
+
+    # Logical not should parse into a UnaryExpr node
+    assert expr == UnaryExpr("!", Name("mana"))
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_factor_multiplication():
+    p = Parser(Lexer("2 * 3"))
+
+    expr = p.parse_expression()
+
+    # Multiplication should parse into a BinaryExpr node
+    assert expr == BinaryExpr(IntLiteral(2), "*", IntLiteral(3))
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_term_addition():
+    p = Parser(Lexer("1 + 2"))
+
+    expr = p.parse_expression()
+
+    # Addition should parse into a BinaryExpr node
+    assert expr == BinaryExpr(IntLiteral(1), "+", IntLiteral(2))
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_precedence_multiplication_before_addition():
+    p = Parser(Lexer("1 + 2 * 3"))
+
+    expr = p.parse_expression()
+
+    # Multiplication should bind tighter than addition
+    assert expr == BinaryExpr(
+        IntLiteral(1),
+        "+",
+        BinaryExpr(IntLiteral(2), "*", IntLiteral(3)),
+    )
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_precedence_grouping_overrides_default():
+    p = Parser(Lexer("(1 + 2) * 3"))
+
+    expr = p.parse_expression()
+
+    # Parentheses should override normal precedence
+    assert expr == BinaryExpr(
+        GroupingExpr(
+            BinaryExpr(IntLiteral(1), "+", IntLiteral(2))
+        ),
+        "*",
+        IntLiteral(3),
+    )
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_comparison():
+    p = Parser(Lexer("1 < 2"))
+
+    expr = p.parse_expression()
+
+    # Comparison should parse into a BinaryExpr node
+    assert expr == BinaryExpr(IntLiteral(1), "<", IntLiteral(2))
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_equality():
+    p = Parser(Lexer("1 == 2"))
+
+    expr = p.parse_expression()
+
+    # Equality should parse into a BinaryExpr node
+    assert expr == BinaryExpr(IntLiteral(1), "==", IntLiteral(2))
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_precedence_comparison_before_equality():
+    p = Parser(Lexer("1 == 2 < 3"))
+
+    expr = p.parse_expression()
+
+    # Comparison should bind tighter than equality
+    assert expr == BinaryExpr(
+        IntLiteral(1),
+        "==",
+        BinaryExpr(IntLiteral(2), "<", IntLiteral(3)),
+    )
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_left_associative_term():
+    p = Parser(Lexer("10 - 3 - 1"))
+
+    expr = p.parse_expression()
+
+    # Term operators should associate left-to-right
+    assert expr == BinaryExpr(
+        BinaryExpr(IntLiteral(10), "-", IntLiteral(3)),
+        "-",
+        IntLiteral(1),
+    )
+
+    # After consuming the expression, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF

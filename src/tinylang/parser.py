@@ -5,7 +5,17 @@ from typing import Optional
 
 from tinylang.lexer import Lexer
 from tinylang.token import Token, TokenKind
-from tinylang.ast import Program, Expr, Stmt, IntLiteral, Name, GroupingExpr, ExprStmt
+from tinylang.ast import (
+    Program,
+    Expr,
+    Stmt,
+    IntLiteral,
+    Name,
+    GroupingExpr,
+    UnaryExpr,
+    BinaryExpr,
+    ExprStmt,
+)
 
 
 @dataclass(frozen=True) # immutable error data (message + source position)
@@ -40,21 +50,29 @@ class Parser:
     # Token navigation utilities
 
     def peek(self) -> Token:
-        """Return the current token without consuming it."""
+        """
+        Return the current token without consuming it.
+        """
         return self.current
 
     def at_end(self) -> bool:
-        """True if the current token is EOF."""
+        """
+        True if the current token is EOF.
+        """
         return self.current.kind == TokenKind.EOF
 
     def advance(self) -> Token:
-        """Consume and return the current token, moving to the next token."""
+        """
+        Consume and return the current token, moving to the next token.
+        """
         self.previous = self.current
         self.current = self.lexer.next_token()
         return self.previous
 
     def check_kind(self, kind: TokenKind) -> bool:
-        """True if the current token matches kind (without consuming)."""
+        """
+        True if the current token matches kind (without consuming).
+        """
         return self.current.kind == kind
 
     def match(self, *kinds: TokenKind) -> bool:
@@ -69,7 +87,9 @@ class Parser:
         return False
 
     def expect(self, kind: TokenKind, message: str) -> Token:
-        """Consume the expected token kind or raise ParseError."""
+        """
+        Consume the expected token kind or raise ParseError.
+        """
         if self.check_kind(kind):
             return self.advance()
 
@@ -112,45 +132,98 @@ class Parser:
             col=tok.col,
         )
 
-    def parse_expression(self) -> Expr:
+    def parse_unary(self) -> Expr:
         """
-        Temporary expression entry point.
+        Parse unary expressions.
 
-        For now, expressions are only primary expressions.
-        Later this will become the top of the precedence ladder.
+        Supported unary operators:
+        - !
+        - -
         """
+        if self.match(TokenKind.NOT, TokenKind.MINUS):
+            tok = self.previous
+            assert tok is not None
+            right = self.parse_unary()
+            return UnaryExpr(tok.src, right)
+
         return self.parse_primary()
 
-    # Statement parsing
-
-    def parse_expr_stmt(self) -> ExprStmt:
+    def parse_factor(self) -> Expr:
         """
-        Parse an expression statement.
+        Parse multiplicative expressions.
 
-        Example:
-            10;
-            x;
-            (1);
+        Supported operators:
+        - *
+        - /
         """
-        expr = self.parse_expression()
-        self.expect(TokenKind.SEMICOLON, "Expected ';' after expression")
-        return ExprStmt(expr)
+        expr = self.parse_unary()
 
-    def parse_statement(self) -> Stmt:
+        while self.match(TokenKind.STAR, TokenKind.SLASH):
+            op_tok = self.previous
+            assert op_tok is not None
+            right = self.parse_unary()
+            expr = BinaryExpr(expr, op_tok.src, right)
+
+        return expr
+
+    def parse_term(self) -> Expr:
         """
-        Parse a single statement.
+        Parse additive expressions.
 
-        For now, only expression statements are supported.
+        Supported operators:
+        - +
+        - -
         """
-        return self.parse_expr_stmt()
+        expr = self.parse_factor()
 
-    # Program entry point
+        while self.match(TokenKind.PLUS, TokenKind.MINUS):
+            op_tok = self.previous
+            assert op_tok is not None
+            right = self.parse_factor()
+            expr = BinaryExpr(expr, op_tok.src, right)
 
-    def parse(self) -> Program:
-        """Parse a full program into a Program AST node."""
-        statements: list[Stmt] = []
+        return expr
 
-        while not self.at_end():
-            statements.append(self.parse_statement())
+    def parse_comparison(self) -> Expr:
+        """
+        Parse comparison expressions.
 
-        return Program(statements)
+        Supported operators:
+        - <
+        - <=
+        - >
+        - >=
+        """
+        expr = self.parse_term()
+
+        while self.match(TokenKind.LT, TokenKind.LTE, TokenKind.GT, TokenKind.GTE):
+            op_tok = self.previous
+            assert op_tok is not None
+            right = self.parse_term()
+            expr = BinaryExpr(expr, op_tok.src, right)
+
+        return expr
+
+    def parse_equality(self) -> Expr:
+        """
+        Parse equality expressions.
+
+        Supported operators:
+        - ==
+        - !=
+        """
+        expr = self.parse_comparison()
+
+        while self.match(TokenKind.EQEQ, TokenKind.NEQ):
+            op_tok = self.previous
+            assert op_tok is not None
+            right = self.parse_comparison()
+            expr = BinaryExpr(expr, op_tok.src, right)
+
+        return expr
+
+    def parse_expression(self) -> Expr:
+        """
+        Parse a full expression using precedence rules.
+        """
+        return self.parse_equality()
