@@ -75,10 +75,11 @@ Detailed notes for each stage of development can be found in the `notes/` direct
 
 These documents explain design decisions, implementation steps, and how each component was built.
 
-* [Project Setup](notes/project-setup.md)
-* [Token System](notes/token-system.md)
-* [Lexer](notes/lexer.md)
-* [Parser](notes/parser.md)
+* [Interpreter Overview](notes/00-interpreter-overview.md)
+* [Project Setup](notes/01-project-setup.md)
+* [Token System](notes/02-token-system.md)
+* [Lexer](notes/03-lexer.md)
+* [Parser](notes/04-parser.md)
 
 ## Development Setup
 
