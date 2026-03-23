@@ -38,7 +38,7 @@ The parser will be implemented incrementally in increasing levels of language co
 2. Define minimal AST node structure ✅
 3. Parse primary expressions ✅
 4. Implement operator precedence parsing ✅
-5. Parse statements (print, expression statements)
+5. Parse statements (print, expression statements) ✅
 6. Parse variable declarations (let)
 7. Parse control flow (if, while)
 8. Parse functions (fn, return, calls`)
@@ -69,6 +69,7 @@ Implemented:
 - `ExprStmt`
 - `Binary`
 - `Unary`
+- `PrintStmt`
 
 Planned:
 - `LetStmt`

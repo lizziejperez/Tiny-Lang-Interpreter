@@ -15,6 +15,7 @@ from tinylang.ast import (
     UnaryExpr,
     BinaryExpr,
     ExprStmt,
+    PrintStmt
 )
 
 
@@ -227,3 +228,56 @@ class Parser:
         Parse a full expression using precedence rules.
         """
         return self.parse_equality()
+    
+    # Statement parsing
+
+    def parse_print_stmt(self) -> PrintStmt:
+        """
+        Parse a print statement after the 'print' keyword
+        has already been consumed.
+
+        Example:
+            print 123;
+            print x + 1;
+        """
+        expr = self.parse_expression()
+        self.expect(TokenKind.SEMICOLON, "Expected ';' after print statement")
+        return PrintStmt(expr)
+
+    def parse_expr_stmt(self) -> ExprStmt:
+        """
+        Parse an expression statement.
+
+        Example:
+            10;
+            x;
+            1 + 2;
+        """
+        expr = self.parse_expression()
+        self.expect(TokenKind.SEMICOLON, "Expected ';' after expression")
+        return ExprStmt(expr)
+
+    def parse_statement(self) -> Stmt:
+        """
+        Parse a single statement.
+
+        Supported statements:
+        - print statements
+        - expression statements
+        """
+        if self.match(TokenKind.PRINT):
+            return self.parse_print_stmt()
+
+        return self.parse_expr_stmt()
+
+    # Entry point
+    def parse(self) -> Program:
+        """
+        Parse a full program into a Program AST node.
+        """
+        statements: list[Stmt] = []
+
+        while not self.at_end():
+            statements.append(self.parse_statement())
+
+        return Program(statements)

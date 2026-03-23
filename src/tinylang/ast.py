@@ -104,3 +104,17 @@ class ExprStmt(Stmt):
         x;
     """
     expr: Expr  # the expression being evaluated
+
+@dataclass(frozen=True)
+class PrintStmt(Stmt):
+    """
+    Print statement.
+
+    Represents a print instruction that evaluates an expression
+    and outputs its value later during interpretation.
+
+    ex:
+        print 1 + 2;
+        print x;
+    """
+    expr: Expr

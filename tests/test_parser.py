@@ -1,8 +1,20 @@
 from tinylang.lexer import Lexer
 from tinylang.parser import Parser, ParseError
 from tinylang.token import TokenKind
-from tinylang.ast import IntLiteral, Name, GroupingExpr, BinaryExpr, UnaryExpr
+from tinylang.ast import (
+    Program,
+    IntLiteral,
+    Name,
+    GroupingExpr,
+    UnaryExpr,
+    BinaryExpr,
+    ExprStmt,
+    PrintStmt
+)
 
+# ----------------------------------------
+# Phase 1: Parser navigation utilities
+# ----------------------------------------
 
 def test_parser_advance_and_peek():
     p = Parser(Lexer("+"))
@@ -55,6 +67,10 @@ def test_parser_expect_error_includes_position():
     except ParseError as e:
         # Ensure the error message contains position information
         assert "line" in str(e) and "col" in str(e)
+
+# ----------------------------------------
+# Phase 2: Primary expression parsing
+# ----------------------------------------
 
 def test_parse_primary_int_literal():
     p = Parser(Lexer("123"))
@@ -120,6 +136,10 @@ def test_parse_primary_error_on_non_expression_token():
     except ParseError as e:
         # Ensure the error message says an expression was expected
         assert "Expected expression" in str(e)
+
+# ----------------------------------------
+# Phase 3: Operator precedence parsing
+# ----------------------------------------
 
 def test_parse_unary_minus():
     p = Parser(Lexer("-123"))
@@ -257,3 +277,139 @@ def test_parse_left_associative_term():
 
     # After consuming the expression, the parser should now be at EOF
     assert p.peek().kind == TokenKind.EOF
+
+# ----------------------------------------
+# Phase 4: Statement parsing
+# ----------------------------------------
+
+def test_parse_expr_stmt_int_literal():
+    p = Parser(Lexer("123;"))
+
+    stmt = p.parse_statement()
+
+    # Integer expression statements should parse into ExprStmt nodes
+    assert stmt == ExprStmt(IntLiteral(123))
+
+    # After consuming the statement, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_expr_stmt_name():
+    p = Parser(Lexer("mana;"))
+
+    stmt = p.parse_statement()
+
+    # Identifier expression statements should parse into ExprStmt nodes
+    assert stmt == ExprStmt(Name("mana"))
+
+    # After consuming the statement, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_expr_stmt_binary_expression():
+    p = Parser(Lexer("1 + 2;"))
+
+    stmt = p.parse_statement()
+
+    # Full expressions should be allowed inside expression statements
+    assert stmt == ExprStmt(
+        BinaryExpr(IntLiteral(1), "+", IntLiteral(2))
+    )
+
+    # After consuming the statement, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_expr_stmt_missing_semicolon():
+    p = Parser(Lexer("123"))
+
+    try:
+        # Missing ';' should raise ParseError
+        p.parse_statement()
+
+        # If no error was raised, the test should fail
+        assert False, "Expected ParseError"
+
+    except ParseError as e:
+        # Ensure the error mentions the missing semicolon
+        assert ";" in str(e)
+
+
+def test_parse_print_stmt_int_literal():
+    p = Parser(Lexer("print 123;"))
+
+    stmt = p.parse_statement()
+
+    # Print statements should parse into PrintStmt nodes
+    assert stmt == PrintStmt(IntLiteral(123))
+
+    # After consuming the statement, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_print_stmt_name():
+    p = Parser(Lexer("print mana;"))
+
+    stmt = p.parse_statement()
+
+    # Print statements should allow identifier expressions
+    assert stmt == PrintStmt(Name("mana"))
+
+    # After consuming the statement, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_print_stmt_expression():
+    p = Parser(Lexer("print 1 + 2;"))
+
+    stmt = p.parse_statement()
+
+    # Print statements should allow full expressions
+    assert stmt == PrintStmt(
+        BinaryExpr(IntLiteral(1), "+", IntLiteral(2))
+    )
+
+    # After consuming the statement, the parser should now be at EOF
+    assert p.peek().kind == TokenKind.EOF
+
+
+def test_parse_print_stmt_missing_semicolon():
+    p = Parser(Lexer("print 123"))
+
+    try:
+        # Missing ';' should raise ParseError
+        p.parse_statement()
+
+        # If no error was raised, the test should fail
+        assert False, "Expected ParseError"
+
+    except ParseError as e:
+        # Ensure the error mentions the missing semicolon
+        assert ";" in str(e)
+
+# ----------------------------------------
+# Phase 5: Full program parsing
+# ----------------------------------------
+
+def test_parse_program_with_expr_and_print_statements():
+    p = Parser(Lexer("123; print 4;"))
+
+    program = p.parse()
+
+    # The parser should build a full Program node from multiple statements
+    assert program == Program([
+        ExprStmt(IntLiteral(123)),
+        PrintStmt(IntLiteral(4)),
+    ])
+
+
+def test_parse_program_with_multiple_statement_types():
+    p = Parser(Lexer("print 1 + 2; mana;"))
+
+    program = p.parse()
+
+    # The parser should support mixing print and expression statements
+    assert program == Program([
+        PrintStmt(BinaryExpr(IntLiteral(1), "+", IntLiteral(2))),
+        ExprStmt(Name("mana")),
+    ])
